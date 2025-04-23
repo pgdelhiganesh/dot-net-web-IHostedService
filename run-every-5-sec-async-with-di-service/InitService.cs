@@ -59,7 +59,6 @@ public class InitService : IHostedService
         _backgroundTask = Task.Run(() => RunAsync(_cts.Token));
 
         _logger.LogInformation("InitService completed.");
-		return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -80,8 +79,6 @@ public class InitService : IHostedService
             }
         }
         _logger.LogInformation("InitService stopped.");
-		
-        return Task.CompletedTask;
     }
 
     private async Task InitializeAsync()
