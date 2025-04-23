@@ -88,7 +88,7 @@ public class InitService : IHostedService
         _logger.LogInformation("Initialization logic finished.");
     }
 	
-	private async Task RunAsync(CancellationToken cancellationToken)
+    private async Task RunAsync(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested && _runCount < _maxRuns)
         {
@@ -106,7 +106,7 @@ public class InitService : IHostedService
         }
     }
 	
-	private async Task DoWork()
+    private async Task DoWork()
     {
 		 _logger.LogInformation("DoWork #{Run} started at {Time}", _runCount + 1, DateTimeOffset.Now);
 
