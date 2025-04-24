@@ -35,7 +35,7 @@ public class InitService : IHostedService
 		return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         // No need to do anything since it only runs once at startup
         return Task.CompletedTask;
