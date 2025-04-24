@@ -61,7 +61,7 @@ public class InitService : IHostedService
         _logger.LogInformation("InitService completed.");
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         // Do anything that want to run on service stopping
 		
