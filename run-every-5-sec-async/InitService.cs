@@ -23,8 +23,8 @@ public class InitService : IHostedService
 {
     private readonly ILogger<InitService> _logger;
 	private readonly IHostEnvironment _env;
-	private CancellationTokenSource _cts;
-    private Task _backgroundTask;
+	private CancellationTokenSource? _cts;
+    private Task? _backgroundTask;
 	
     public InitService(ILogger<InitService> logger, IHostEnvironment env)
     {
@@ -43,7 +43,6 @@ public class InitService : IHostedService
         _backgroundTask = Task.Run(() => RunAsync(_cts.Token));
 
         _logger.LogInformation("InitService completed.");
-		return Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -54,18 +53,27 @@ public class InitService : IHostedService
         if (_cts != null)
         {
             _cts.Cancel();
-            try
-            {
-                await _backgroundTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // Expected when cancellation happens
-            }
+		if (_backgroundTask != null)
+		{
+		  try
+		  {
+		    await _backgroundTask;
+		  }
+		  catch (OperationCanceledException)
+		  {
+		    logger.LogInformation("Background task was canceled.");
+		  }
+		  catch (Exception ex)
+		  {
+		    logger.LogError(ex, "Unexpected error while awaiting background task.");
+		  }
+		}
+		else
+		{
+		  logger.LogWarning("StopAsync called but background task was null.");
+		}
         }
         _logger.LogInformation("InitService stopped.");
-		
-        return Task.CompletedTask;
     }
 
     private async Task InitializeAsync()
