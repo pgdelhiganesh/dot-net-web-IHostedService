@@ -36,8 +36,8 @@ public class InitService : IHostedService
     private readonly ILogger<InitService> _logger;
 	private readonly IHostEnvironment _env;
 	private readonly IServiceProvider _serviceProvider;
-	private CancellationTokenSource _cts;
-    private Task _backgroundTask;
+	private CancellationTokenSource? _cts;
+    private Task? _backgroundTask;
 	private int _runCount = 0;
     private readonly int _maxRuns = 10; // Change this to however many times you want DoWork to run
 	
@@ -69,14 +69,25 @@ public class InitService : IHostedService
         if (_cts != null)
         {
             _cts.Cancel();
-            try
-            {
-                await _backgroundTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // Expected when cancellation happens
-            }
+            if (_backgroundTask != null)
+		{
+		  try
+		  {
+		    await _backgroundTask;
+		  }
+		  catch (OperationCanceledException)
+		  {
+		    logger.LogInformation("Background task was canceled.");
+		  }
+		  catch (Exception ex)
+		  {
+		    logger.LogError(ex, "Unexpected error while awaiting background task.");
+		  }
+		}
+		else
+		{
+		  logger.LogWarning("StopAsync called but background task was null.");
+		}
         }
         _logger.LogInformation("InitService stopped.");
     }
